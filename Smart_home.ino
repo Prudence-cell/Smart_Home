@@ -13,6 +13,10 @@
 /* ===== WIFI ===== */
 const char* ssid = "M022_83C4";
 const char* password = "20252025@A!aze";
+//const char* ssid = "Infinity";
+//const char* password = "alpha@beta2021";
+unsigned long dernierAffichage = 0; 
+const long intervalle = 3000;
 
 /* ===== OBJETS ===== */
 Servo porte;
@@ -39,7 +43,10 @@ void setup() {
   linge.write(0);
 
   /* Communication série */
+
   Serial.begin(115200);
+  delay(1500);
+  Serial.println("\n--- INITIALISATION DU SYSTEME ---");
   Serial.println("=== Systeme Domotique ESP32 Demarre ===");
 
   /* WIFI */
@@ -137,7 +144,7 @@ void loop() {
   }
 
   /* ===== ECLAIRAGE AUTO (si pas de contrôle manuel) ===== */
-  if (presence == HIGH && !nuit && !lightState) {
+  if (presence == HIGH && nuit && !lightState) {
     digitalWrite(LED_PIN, HIGH);
   } else if (!lightState) {
     digitalWrite(LED_PIN, LOW);
