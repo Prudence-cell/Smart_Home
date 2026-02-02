@@ -62,11 +62,9 @@ void setup() {
   server.on("/status", HTTP_GET, []() {
     int presence = digitalRead(PIR_PIN);
     int lumiere = analogRead(LDR_PIN);
-    int eau = digitalRead(WATER_PIN);
     
     String json = "{";
     json += "\"presence\":" + String(presence == HIGH ? "true" : "false") + ",";
-    json += "\"rain\":" + String(eau == HIGH ? "true" : "false") + ",";
     json += "\"light\":" + String(lightState ? "true" : "false") + ",";
     json += "\"door\":" + String(doorState ? "true" : "false") + ",";
     json += "\"humidity\":" + String(lumiere) + ",";  // LDR comme "niveau"
