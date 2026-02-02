@@ -18,6 +18,9 @@ const long intervalle = 3000;
 Servo linge;
 WebServer server(80);  // ← AJOUT : Serveur Web sur le port 80
 
+/* ===== ÉTATS (pour l'application) ===== */
+bool laundryState = false;
+
 
 
 void setup() {
@@ -35,19 +38,52 @@ void setup() {
   Serial.println("\n--- INITIALISATION DU SYSTEME ---");
   Serial.println("=== Systeme Domotique ESP32 Demarre ===");
 
+
+
+
   /* WIFI */
   WiFi.begin(ssid, password);
-  Serial.print("Connexion WiFi");
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  
-  Serial.println("\n✅ WiFi connecté");
-  Serial.print("📡 IP ESP32 : ");
-  Serial.println(WiFi.localIP());
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.println("\n✅ Linge connecté. IP : " + WiFi.localIP().toString());
 
+  server.on("/status", HTTP_GET, []() {
+    String json = "{";
+    json += "\"rain\":" + String(digitalRead(WATER_PIN) == HIGH ? "true" : "false") + ",";
+    json += "\"laundry\":" + String(laundryState ? "true" : "false");
+    json += "}";
+    server.sendHeader("Access-Control-Allow-Origin", "*");
+    server.send(200, "application/json", json);
+  });
+
+  server.on("/laundry/protect", HTTP_POST, []() { 
+    laundryState = true; 
+    linge.write(90); 
+    server.sendHeader("Access-Control-Allow-Origin", "*"); 
+    server.send(200); 
+  });
+
+  server.on("/laundry/expose", HTTP_POST, []() {
+    if (digitalRead(WATER_PIN) == HIGH) { // SÉCURITÉ PLUIE
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+      server.send(403, "text/plain", "Safety Block: Raining!"); 
+    } else {
+      laundryState = false;
+      linge.write(0);
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+      server.send(200);
+    }
+  });
+
+  server.onNotFound([]() {
+    if (server.method() == HTTP_OPTIONS) {
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+      server.sendHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+      server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+      server.send(204);
+    } else { server.send(404); }
+  });
+
+  server.begin();
   Serial.println("🌐 Serveur Web démarré !");
 }
 
@@ -55,22 +91,14 @@ void loop() {
   server.handleClient();  // ← ÉCOUTE DES REQUÊTES (CRUCIAL)
 
   /* ===== LECTURE DES CAPTEURS ===== */
-  int presence = digitalRead(PIR_PIN);
-  int lumiere = analogRead(LDR_PIN);
   int eau = digitalRead(WATER_PIN);
-  bool nuit = (lumiere > seuilNuit);
 
   /* ===== DEBUG SERIE ===== */
-  Serial.print("Presence: ");
-  Serial.print(presence);
-  Serial.print(" | LDR: ");
-  Serial.print(lumiere);
   Serial.print(" | Eau: ");
   Serial.println(eau);
-  Serial.print(" | Nuit: ");
-  Serial.println(nuit);
 
   /* ===== PROTECTION DU LINGE ===== */
+  /*
   if (eau == HIGH) {
     linge.write(90);   // Pluie → linge à l'abri
   } else {
@@ -78,4 +106,16 @@ void loop() {
   }
 
   delay(1000);  // Petit délai pour stabilité
+  */
+
+
+
+  // Sécurité automatique prioritaire
+  if (eau == HIGH && !laundryState) {
+    laundryState = true;
+    linge.write(90);
+    Serial.println("🌧️ Pluie ! Linge mis à l'abri.");
+  }
+  
+  delay(1000);
 }                                                                                                                                                                                                                                            
