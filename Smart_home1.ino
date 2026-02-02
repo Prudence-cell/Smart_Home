@@ -9,8 +9,8 @@
 #define SERVO_PORTE    25
 
 /* ===== WIFI ===== */
-const char* ssid = "M022_83C4";
-const char* password = "20252025@A!aze";
+const char* ssid = "State Man 😎";
+const char* password = "prudence";
 //const char* ssid = "Infinity";
 //const char* password = "alpha@beta2021";
 unsigned long dernierAffichage = 0; 
@@ -21,7 +21,7 @@ Servo porte;
 WebServer server(80);  // ← AJOUT : Serveur Web sur le port 80
 
 /* ===== PARAMÈTRES ===== */
-int seuilNuit = 2000;
+int seuilNuit = 1200;
 
 /* ===== ÉTATS (pour l'application) ===== */
 bool lightState = false;
@@ -116,7 +116,7 @@ void loop() {
   int presence = digitalRead(PIR_PIN);
   int lumiere = analogRead(LDR_PIN);
   int eau = digitalRead(WATER_PIN);
-  bool nuit = (lumiere > seuilNuit);
+  bool nuit = (lumiere < seuilNuit);
 
   /* ===== DEBUG SERIE ===== */
   Serial.print("Presence: ");
@@ -151,5 +151,5 @@ void loop() {
     linge.write(0);    // Pas de pluie → linge dehors
   }
 
-  delay(100);  // Petit délai pour stabilité
+  delay(1000);  // Petit délai pour stabilité
 }
