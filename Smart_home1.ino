@@ -115,7 +115,6 @@ void loop() {
   /* ===== LECTURE DES CAPTEURS ===== */
   int presence = digitalRead(PIR_PIN);
   int lumiere = analogRead(LDR_PIN);
-  int eau = digitalRead(WATER_PIN);
   bool nuit = (lumiere < seuilNuit);
 
   /* ===== DEBUG SERIE ===== */
@@ -123,8 +122,6 @@ void loop() {
   Serial.print(presence);
   Serial.print(" | LDR: ");
   Serial.print(lumiere);
-  Serial.print(" | Eau: ");
-  Serial.printl(eau);
   Serial.print(" | Nuit: ");
   Serial.println(nuit);
 
@@ -142,13 +139,6 @@ void loop() {
     digitalWrite(LED_PIN, HIGH);
   } else if (!lightState) {
     digitalWrite(LED_PIN, LOW);
-  }
-
-  /* ===== PROTECTION DU LINGE ===== */
-  if (eau == HIGH) {
-    linge.write(90);   // Pluie → linge à l'abri
-  } else {
-    linge.write(0);    // Pas de pluie → linge dehors
   }
 
   delay(1000);  // Petit délai pour stabilité
