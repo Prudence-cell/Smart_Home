@@ -7,8 +7,6 @@
 #define LDR_PIN        34
 #define LED_PIN        26
 #define SERVO_PORTE    25
-#define WATER_PIN      33
-#define SERVO_LINGE    14
 
 /* ===== WIFI ===== */
 const char* ssid = "M022_83C4";
@@ -20,7 +18,6 @@ const long intervalle = 3000;
 
 /* ===== OBJETS ===== */
 Servo porte;
-Servo linge;
 WebServer server(80);  // ← AJOUT : Serveur Web sur le port 80
 
 /* ===== PARAMÈTRES ===== */
@@ -33,14 +30,11 @@ bool doorState = false;
 void setup() {
   /* Capteurs */
   pinMode(PIR_PIN, INPUT);
-  pinMode(WATER_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
 
   /* Servos */
   porte.attach(SERVO_PORTE);
-  linge.attach(SERVO_LINGE);
   porte.write(0);
-  linge.write(0);
 
   /* Communication série */
 
