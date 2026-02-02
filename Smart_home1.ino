@@ -130,7 +130,7 @@ void loop() {
   Serial.print(" | LDR: ");
   Serial.print(lumiere);
   Serial.print(" | Eau: ");
-  Serial.println(eau);
+  Serial.printl(eau);
   Serial.print(" | Nuit: ");
   Serial.println(nuit);
 
