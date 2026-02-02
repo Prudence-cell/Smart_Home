@@ -1,0 +1,16 @@
+Limites:
+Le capteur PIR ne répond pas vite. Son temps de latence donc la rapidité de réponse n'est pas optimale.
+Le capteur d'eau parfois n'est pas vraiment sensible à l'eau. ça ne réagit pas instatenement à une goutte d'eau.
+N'importe qui pourrait entrer dans la chambre
+
+Difficultés:
+Le capteur PIR ne marche pas des fois et on est obligé de debrancher les cables qui relient ça et de refaire le branchement avant que ça ne marche
+Mise en place des servo sur la maison. Etant donné que les servomoteurs ont des angles pour la rotation comment les disposer devient source de réflexion pour que ça joue leur rôle correctement
+La connexion de l'appli et du code n'était pas une affaire aussi facile.
+
+
+Perspectives:
+
+Utiliser un capteur ultrason pour la détection de présence humaine en mettant en place un pont diviseur de tension pour protéger l'ESP32 pour  la broche de l'ESP32 qui sera relié à la broche Echo de l'ultrason.
+Utiliser un capteur de pluie pour la pluviométrie car ce capteur est plus sensible à l'eau.
+Mise en place d'un système d'authentification et après validation du code ou de la carte la porte s'ouvre automatiquement.
